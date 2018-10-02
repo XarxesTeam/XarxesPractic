@@ -1,0 +1,8 @@
+﻿  ModuleClient.cpp
+c:\users\ferranmv2\desktop\mailingapp - todo\src\moduleclient.cpp(94): warning C4018: '<': signed/unsigned mismatch
+  ModuleServer.cpp
+c:\users\ferranmv2\desktop\mailingapp - todo\src\moduleserver.cpp(116): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  Generating Code...
+c:\users\ferranmv2\desktop\mailingapp - todo\src\moduleserver.cpp(129): warning C4717: 'ModuleServer::sendPacketQueryAllMessagesResponse': recursive on all control paths, function will cause runtime stack overflow
+c:\users\ferranmv2\desktop\mailingapp - todo\src\moduleserver.cpp(415): warning C4715: 'ModuleServer::getClientStateInfoForSocket': not all control paths return a value
+  MailingApp.vcxproj -> C:\Users\ferranmv2\Desktop\MailingApp - TODO\x64\Debug\MailingApp.exe

@@ -59,8 +59,6 @@ bool ModuleServer::cleanUp()
 void ModuleServer::onPacketReceived(SOCKET socket, const InputMemoryStream & stream)
 {
 	PacketType packetType;
-
-	// TODO: Deserialize the packet type
 	stream.Read(packetType);
 
 	LOG("onPacketReceived() - packetType: %d", (int)packetType);
@@ -85,7 +83,6 @@ void ModuleServer::onPacketReceived(SOCKET socket, const InputMemoryStream & str
 void ModuleServer::onPacketReceivedLogin(SOCKET socket, const InputMemoryStream & stream)
 {
 	std::string loginName;
-	// TODO: Deserialize the login username into loginName
 	stream.Read(loginName);
 
 	// Register the client with this socket with the deserialized username
@@ -107,35 +104,27 @@ void ModuleServer::sendPacketQueryAllMessagesResponse(SOCKET socket, const std::
 
 	OutputMemoryStream outStream;
 	// TODO: Create QueryAllMessagesResponse and serialize all the messages
-	sendPacketQueryAllMessagesResponse(socket, username);
 
-
-	// -- serialize the packet type
 	outStream.Write(PacketType::QueryAllMessagesResponse);
-	// -- serialize the array size
-	int arr_size = messages.size();
-	outStream.Write(arr_size);
-	// -- serialize the messages in the array
-	for (int k = 0; k < arr_size; k++)
+	outStream.Write(messages.size());
+	for (int i = 0; i < messages.size(); i++)
 	{
-		outStream.Write(messages[k].body);
-		outStream.Write(messages[k].receiverUsername);
-		outStream.Write(messages[k].senderUsername);
-		outStream.Write(messages[k].subject);
+		outStream.Write(messages[i].receiverUsername);
+		outStream.Write(messages[i].senderUsername);
+		outStream.Write(messages[i].subject);
+		outStream.Write(messages[i].body);
 	}
-	
-	// TODO: Send the packet (pass the outStream to the sendPacket function)
+
 	sendPacket(socket, outStream);
 }
 
 void ModuleServer::onPacketReceivedSendMessage(SOCKET socket, const InputMemoryStream & stream)
 {
 	Message message;
-	// TODO: Deserialize the packet (all fields in Message)
-	stream.Read(message.body);
 	stream.Read(message.receiverUsername);
 	stream.Read(message.senderUsername);
 	stream.Read(message.subject);
+	stream.Read(message.body);
 
 	// Insert the message in the database
 	database()->insertMessage(message);
@@ -149,7 +138,7 @@ void ModuleServer::sendPacket(SOCKET socket, OutputMemoryStream & stream)
 	client.sendBuffer.resize(oldSize + HEADER_SIZE + stream.GetSize());
 	uint32_t &packetSize = *(uint32_t*)&client.sendBuffer[oldSize];
 	packetSize = HEADER_SIZE + stream.GetSize(); // header size + payload size
-	//std::copy(stream.GetBufferPtr(), stream.GetBufferPtr() + stream.GetSize(), &client.sendBuffer[oldSize] + HEADER_SIZE);
+												 //std::copy(stream.GetBufferPtr(), stream.GetBufferPtr() + stream.GetSize(), &client.sendBuffer[oldSize] + HEADER_SIZE);
 	memcpy(&client.sendBuffer[oldSize] + HEADER_SIZE, stream.GetBufferPtr(), stream.GetSize());
 }
 
@@ -411,7 +400,7 @@ ModuleServer::ClientStateInfo & ModuleServer::getClientStateInfoForSocket(SOCKET
 		}
 	}
 
-	assert(nullptr && "The client for this socket does not exist.");
+	assert(true && "The client for this socket does not exist.");
 }
 
 bool ModuleServer::existsClientStateInfoForSocket(SOCKET s)
@@ -447,7 +436,8 @@ IDatabaseGateway * ModuleServer::database()
 {
 	if (g_SimulateDatabaseConnection) {
 		return simulatedDatabaseGateway;
-	} else {
+	}
+	else {
 		return mysqlDatabaseGateway;
 	}
 }

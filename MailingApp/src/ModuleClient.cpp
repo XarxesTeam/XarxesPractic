@@ -69,7 +69,7 @@ void ModuleClient::onPacketReceived(const InputMemoryStream & stream)
 	stream.Read(packetType);
 
 	LOG("onPacketReceived() - packetType: %d", (int)packetType);
-	
+
 	switch (packetType)
 	{
 	case PacketType::QueryAllMessagesResponse:
@@ -89,17 +89,15 @@ void ModuleClient::onPacketReceivedQueryAllMessagesResponse(const InputMemoryStr
 	// TODO: Deserialize the number of messages
 	stream.Read(messageCount);
 
-	
 	// TODO: Deserialize messages one by one and push_back them into the messages vector
-	for (int k = 0; k < messageCount; k++)
-	{
-		stream.Read(messages[k].body);
-		stream.Read(messages[k].receiverUsername);
-		stream.Read(messages[k].senderUsername);
-		stream.Read(messages[k].subject);
-
-	}
 	// NOTE: The messages vector is an attribute of this class
+	for (int i = 0; i < messageCount; i++)
+	{
+		stream.Read(messages[i].body);
+		stream.Read(messages[i].receiverUsername);
+		stream.Read(messages[i].senderUsername);
+		stream.Read(messages[i].subject);
+	}
 
 	messengerState = MessengerState::ShowingMessages;
 }
@@ -108,12 +106,11 @@ void ModuleClient::sendPacketLogin(const char * username)
 {
 	OutputMemoryStream stream;
 
-	// TODO: Serialize Login (packet type and username)
 	stream.Write(PacketType::LoginRequest);
-	std::string name = username;
-	stream.Write(name);
-	// TODO: Use sendPacket() to send the packet
+	stream.Write(std::string(username));
+
 	sendPacket(stream);
+
 	messengerState = MessengerState::RequestingMessages;
 }
 
@@ -122,7 +119,7 @@ void ModuleClient::sendPacketQueryMessages()
 	OutputMemoryStream stream;
 
 	// TODO: Serialize message (only the packet type)
-	stream.Write(PacketType::SendMessageRequest);
+	stream.Write(PacketType::QueryAllMessagesRequest);
 	// TODO: Use sendPacket() to send the packet
 	sendPacket(stream);
 
@@ -133,18 +130,14 @@ void ModuleClient::sendPacketSendMessage(const char * receiver, const char * sub
 {
 	OutputMemoryStream stream;
 
-	// TODO: Serialize message (packet type and all fields in the message)
 	stream.Write(PacketType::SendMessageRequest);
-	
-	
-	stream.Write((std::string)message);
-	stream.Write((std::string)receiver);
-	stream.Write(senderBuf);
-	stream.Write((std::string)subject);
+	// TODO: Serialize message (packet type and all fields in the message)
 	// NOTE: remember that senderBuf contains the current client (i.e. the sender of the message)
+	stream.Write(std::string(receiver));
+	stream.Write(std::string(senderBuf));
+	stream.Write(std::string(subject));
+	stream.Write(std::string(message));
 
-
-	// TODO: Use sendPacket() to send the packet
 	sendPacket(stream);
 
 	messengerState = MessengerState::RequestingMessages;
@@ -158,7 +151,7 @@ void ModuleClient::sendPacket(const OutputMemoryStream & stream)
 	sendBuffer.resize(oldSize + HEADER_SIZE + stream.GetSize());
 	uint32_t &packetSize = *(uint32_t*)&sendBuffer[oldSize];
 	packetSize = HEADER_SIZE + stream.GetSize(); // header size + payload size
-	//std::copy(stream.GetBufferPtr(), stream.GetBufferPtr() + stream.GetSize(), &sendBuffer[oldSize] + HEADER_SIZE);
+												 //std::copy(stream.GetBufferPtr(), stream.GetBufferPtr() + stream.GetSize(), &sendBuffer[oldSize] + HEADER_SIZE);
 	memcpy(&sendBuffer[oldSize] + HEADER_SIZE, stream.GetBufferPtr(), stream.GetSize());
 }
 

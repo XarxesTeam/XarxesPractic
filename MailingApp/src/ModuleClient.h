@@ -29,7 +29,7 @@ private:
 
 	void sendPacketQueryMessages();
 
-	void sendPacketClearMessages();
+	void sendPacketClearMessages(int = -1);
 
 	void sendPacketSendMessage(const char *receiver, const char *subject, const char *message);
 
@@ -80,6 +80,7 @@ private:
 		SendingLogin,
 		RequestingMessages,
 		RequestingMessagesClear,
+		RequestingClearOneMessage,
 		ReceivingMessages,
 		ShowingMessages,
 		ComposingMessage,
@@ -109,4 +110,6 @@ private:
 	// Send buffer state
 	size_t sendHead = 0;
 	std::vector<uint8_t> sendBuffer;
+
+	int indexMessageToDelete = -1;
 };

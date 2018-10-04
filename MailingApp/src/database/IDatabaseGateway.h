@@ -20,6 +20,8 @@ public:
 
 	virtual void clearMessages() {};
 
+	virtual void clearMessage(int index) {};
+
 	virtual std::vector<Message> getAllMessagesReceivedByUser(const std::string &username) = 0;
 
 	virtual void updateGUI() { }

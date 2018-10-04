@@ -21,6 +21,15 @@ void SimulatedDatabaseGateway::clearMessages()
 	allMessages.clear();
 }
 
+void SimulatedDatabaseGateway::clearMessage(int index)
+{
+	std::vector<Message>::const_iterator it = allMessages.begin();
+	for (int i = 0; i < index; i++)
+		it++;
+
+	allMessages.erase(it);
+}
+
 std::vector<Message> SimulatedDatabaseGateway::getAllMessagesReceivedByUser(const std::string & username)
 {
 	std::vector<Message> messages;

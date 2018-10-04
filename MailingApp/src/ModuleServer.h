@@ -35,8 +35,10 @@ private:
 	void onPacketReceivedQueryAllMessages(SOCKET socket, const InputMemoryStream& stream);
 	
 	void onPacketReceivedSendMessage(SOCKET socket, const InputMemoryStream& stream);
-
+	
 	void onPackedReceivedClearUserMessages(SOCKET socket, const InputMemoryStream& stream);
+
+	void onPackedReceivedClearUserOneMessage(SOCKET socket, const InputMemoryStream& stream);
 
 	void sendPacketQueryAllMessagesResponse(SOCKET socket, const std::string &username);
 

@@ -77,6 +77,9 @@ void ModuleServer::onPacketReceived(SOCKET socket, const InputMemoryStream & str
 	case PacketType::ClearAllMessagesRequest:
 		onPackedReceivedClearUserMessages(socket, stream);
 		break;
+	case PacketType::ClearOneMessage:
+		onPackedReceivedClearUserOneMessage(socket, stream);
+		break;
 	default:
 		LOG("Unknown packet type received");
 		break;
@@ -138,6 +141,13 @@ void ModuleServer::onPacketReceivedSendMessage(SOCKET socket, const InputMemoryS
 void ModuleServer::onPackedReceivedClearUserMessages(SOCKET socket, const InputMemoryStream & stream)
 {
 	database()->clearMessages();
+}
+
+void ModuleServer::onPackedReceivedClearUserOneMessage(SOCKET socket, const InputMemoryStream & stream)
+{
+	int index;
+	stream.Read(index);
+	database()->clearMessage(index);
 }
 
 void ModuleServer::sendPacket(SOCKET socket, OutputMemoryStream & stream)

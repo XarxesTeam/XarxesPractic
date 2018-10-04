@@ -49,6 +49,9 @@ void ModuleClient::updateMessenger()
 	case ModuleClient::MessengerState::RequestingMessagesClear:
 		sendPacketClearMessages();
 		break;
+	case ModuleClient::MessengerState::RequestingClearOneMessage:
+		sendPacketClearMessages(indexMessageToDelete);
+		break;
 	case ModuleClient::MessengerState::ReceivingMessages:
 		// Idle, do nothing
 		break;
@@ -131,13 +134,21 @@ void ModuleClient::sendPacketQueryMessages()
 	messengerState = MessengerState::ReceivingMessages;
 }
 
-void ModuleClient::sendPacketClearMessages()
+void ModuleClient::sendPacketClearMessages(int index)
 {
 	OutputMemoryStream stream;
+	if (index == -1)
+	{
+		// TODO: Serialize message (only the packet type)
+		stream.Write(PacketType::ClearAllMessagesRequest);
+		// TODO: Use sendPacket() to send the packet
+	}
+	else
+	{
+		stream.Write(PacketType::ClearOneMessage);
+		stream.Write(index);
+	}
 
-	// TODO: Serialize message (only the packet type)
-	stream.Write(PacketType::ClearAllMessagesRequest);
-	// TODO: Use sendPacket() to send the packet
 	sendPacket(stream);
 
 	messengerState = MessengerState::RequestingMessages;
@@ -259,6 +270,11 @@ void ModuleClient::updateGUI()
 				if (ImGui::TreeNode(&message, "%s - %s", message.senderUsername.c_str(), message.subject.c_str()))
 				{
 					ImGui::TextWrapped("%s", message.body.c_str());
+					if (ImGui::Button("Delete this message"))
+					{
+						messengerState = MessengerState::RequestingClearOneMessage;
+						indexMessageToDelete = i - 1;
+					}
 					ImGui::TreePop();
 				}
 				ImGui::PopID();

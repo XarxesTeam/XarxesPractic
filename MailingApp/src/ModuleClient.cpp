@@ -93,10 +93,12 @@ void ModuleClient::onPacketReceivedQueryAllMessagesResponse(const InputMemoryStr
 	// NOTE: The messages vector is an attribute of this class
 	for (int i = 0; i < messageCount; i++)
 	{
-		stream.Read(messages[i].body);
-		stream.Read(messages[i].receiverUsername);
-		stream.Read(messages[i].senderUsername);
-		stream.Read(messages[i].subject);
+		Message new_message;
+		stream.Read(new_message.receiverUsername);
+		stream.Read(new_message.senderUsername);
+		stream.Read(new_message.subject);
+		stream.Read(new_message.body);
+		messages.push_back(new_message);
 	}
 
 	messengerState = MessengerState::ShowingMessages;

@@ -19,6 +19,8 @@ public:
 
 	void insertMessage(const Message &message) override;
 
+	void clearMessages() override;
+
 	std::vector<Message> getAllMessagesReceivedByUser(const std::string &username) override;
 
 private:

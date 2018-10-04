@@ -16,6 +16,11 @@ void SimulatedDatabaseGateway::insertMessage(const Message & message)
 	allMessages.push_back(message);
 }
 
+void SimulatedDatabaseGateway::clearMessages()
+{
+	allMessages.clear();
+}
+
 std::vector<Message> SimulatedDatabaseGateway::getAllMessagesReceivedByUser(const std::string & username)
 {
 	std::vector<Message> messages;

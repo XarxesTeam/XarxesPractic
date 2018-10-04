@@ -74,6 +74,9 @@ void ModuleServer::onPacketReceived(SOCKET socket, const InputMemoryStream & str
 	case PacketType::SendMessageRequest:
 		onPacketReceivedSendMessage(socket, stream);
 		break;
+	case PacketType::ClearAllMessagesRequest:
+		onPackedReceivedClearUserMessages(socket, stream);
+		break;
 	default:
 		LOG("Unknown packet type received");
 		break;
@@ -130,6 +133,11 @@ void ModuleServer::onPacketReceivedSendMessage(SOCKET socket, const InputMemoryS
 
 	// Insert the message in the database
 	database()->insertMessage(message);
+}
+
+void ModuleServer::onPackedReceivedClearUserMessages(SOCKET socket, const InputMemoryStream & stream)
+{
+	database()->clearMessages();
 }
 
 void ModuleServer::sendPacket(SOCKET socket, OutputMemoryStream & stream)

@@ -29,6 +29,8 @@ private:
 
 	void sendPacketQueryMessages();
 
+	void sendPacketClearMessages();
+
 	void sendPacketSendMessage(const char *receiver, const char *subject, const char *message);
 
 	void sendPacket(const OutputMemoryStream &stream);
@@ -77,6 +79,7 @@ private:
 	{
 		SendingLogin,
 		RequestingMessages,
+		RequestingMessagesClear,
 		ReceivingMessages,
 		ShowingMessages,
 		ComposingMessage,

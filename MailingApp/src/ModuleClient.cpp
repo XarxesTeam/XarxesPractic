@@ -46,6 +46,9 @@ void ModuleClient::updateMessenger()
 	case ModuleClient::MessengerState::RequestingMessages:
 		sendPacketQueryMessages();
 		break;
+	case ModuleClient::MessengerState::RequestingMessagesClear:
+		sendPacketClearMessages();
+		break;
 	case ModuleClient::MessengerState::ReceivingMessages:
 		// Idle, do nothing
 		break;
@@ -126,6 +129,18 @@ void ModuleClient::sendPacketQueryMessages()
 	sendPacket(stream);
 
 	messengerState = MessengerState::ReceivingMessages;
+}
+
+void ModuleClient::sendPacketClearMessages()
+{
+	OutputMemoryStream stream;
+
+	// TODO: Serialize message (only the packet type)
+	stream.Write(PacketType::ClearAllMessagesRequest);
+	// TODO: Use sendPacket() to send the packet
+	sendPacket(stream);
+
+	messengerState = MessengerState::RequestingMessages;
 }
 
 void ModuleClient::sendPacketSendMessage(const char * receiver, const char * subject, const char *message)
@@ -224,6 +239,11 @@ void ModuleClient::updateGUI()
 			if (ImGui::Button("Refresh inbox"))
 			{
 				messengerState = MessengerState::RequestingMessages;
+			}
+
+			if (ImGui::Button("Clear inbox"))
+			{
+				messengerState = MessengerState::RequestingMessagesClear;
 			}
 
 			ImGui::Text("Inbox:");

@@ -60,7 +60,7 @@ std::vector<Message> MySqlDatabaseGateway::getAllMessagesReceivedByUser(const st
 	{
 		std::string sqlStatement;
 		// TODO: Create the SQL statement to query all messages from the given user (SELECT)
-		sqlStatement = "SELECT sender, receiver, subject, body FROM MessengerServerDatabase WHERE receiver = '" + username + "'";
+		sqlStatement = "SELECT sender, receiver, subject, body, id FROM MessengerServerDatabase WHERE receiver = '" + username + "'";
 
 		// consult all messages
 		DBResultSet res = db.sql(sqlStatement.c_str());
@@ -73,6 +73,7 @@ std::vector<Message> MySqlDatabaseGateway::getAllMessagesReceivedByUser(const st
 			message.receiverUsername = messageRow.columns[1];
 			message.subject = messageRow.columns[2];
 			message.body = messageRow.columns[3];
+			message.id = atoi((const char*)messageRow.columns[4].c_str());
 			messages.push_back(message);
 		}
 	}

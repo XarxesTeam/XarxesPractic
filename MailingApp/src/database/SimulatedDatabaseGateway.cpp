@@ -16,12 +16,12 @@ void SimulatedDatabaseGateway::insertMessage(const Message & message)
 	allMessages.push_back(message);
 }
 
-void SimulatedDatabaseGateway::clearMessages()
+void SimulatedDatabaseGateway::clearMessages(const std::string & username)
 {
 	allMessages.clear();
 }
 
-void SimulatedDatabaseGateway::clearMessage(int index)
+void SimulatedDatabaseGateway::clearMessage(int index, const std::string & username)
 {
 	std::vector<Message>::const_iterator it = allMessages.begin();
 	for (int i = 0; i < index; i++)

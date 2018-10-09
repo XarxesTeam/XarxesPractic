@@ -140,14 +140,21 @@ void ModuleServer::onPacketReceivedSendMessage(SOCKET socket, const InputMemoryS
 
 void ModuleServer::onPackedReceivedClearUserMessages(SOCKET socket, const InputMemoryStream & stream)
 {
-	database()->clearMessages();
+	std::string username;
+	stream.Read(username);
+
+	database()->clearMessages(username);
 }
 
 void ModuleServer::onPackedReceivedClearUserOneMessage(SOCKET socket, const InputMemoryStream & stream)
 {
 	int index;
 	stream.Read(index);
-	database()->clearMessage(index);
+
+	std::string username;
+	stream.Read(username);
+
+	database()->clearMessage(index,username);
 }
 
 void ModuleServer::sendPacket(SOCKET socket, OutputMemoryStream & stream)

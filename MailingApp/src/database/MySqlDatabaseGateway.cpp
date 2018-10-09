@@ -50,6 +50,42 @@ void MySqlDatabaseGateway::insertMessage(const Message & message)
 	}
 }
 
+void MySqlDatabaseGateway::clearMessages(const std::string & username)
+{
+	DBConnection db(bufMySqlHost, bufMySqlPort, bufMySqlDatabase, bufMySqlUsername, bufMySqlPassword);
+
+	if (db.isConnected())
+	{
+		DBResultSet res;
+
+		//sqlStatement to clear all messages
+		std::string sqlStatement;
+		sqlStatement = "test";
+
+		// insert some messages
+		db.sql(sqlStatement.c_str());
+	}
+}
+
+void MySqlDatabaseGateway::clearMessage(int index, const std::string & username)
+{
+	DBConnection db(bufMySqlHost, bufMySqlPort, bufMySqlDatabase, bufMySqlUsername, bufMySqlPassword);
+
+	if (db.isConnected())
+	{
+		DBResultSet res;
+		char buffer[20];
+		itoa(index, buffer, 10);
+
+		//sqlStatement to clear an especific message
+		std::string sqlStatement;
+		sqlStatement = "DELETE * FROM MessengerServerDatabase(sender, receiver, subject, body, id) WHERE receiver = " + username + " AND id = " + buffer;
+		
+		// insert some messages
+		db.sql(sqlStatement.c_str());
+	}
+}
+
 std::vector<Message> MySqlDatabaseGateway::getAllMessagesReceivedByUser(const std::string & username)
 {
 	std::vector<Message> messages;
@@ -77,8 +113,7 @@ std::vector<Message> MySqlDatabaseGateway::getAllMessagesReceivedByUser(const st
 			messages.push_back(message);
 		}
 	}
-
-
+	
 	return messages;
 }
 

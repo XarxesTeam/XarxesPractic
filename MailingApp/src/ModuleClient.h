@@ -112,4 +112,6 @@ private:
 	std::vector<uint8_t> sendBuffer;
 
 	int indexMessageToDelete = -1;
+	std::string userMessageToDelete;
+
 };

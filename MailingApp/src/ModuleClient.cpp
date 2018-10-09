@@ -149,6 +149,8 @@ void ModuleClient::sendPacketClearMessages(int index)
 		stream.Write(index);
 	}
 
+	stream.Write(std::string(userMessageToDelete));
+
 	sendPacket(stream);
 
 	messengerState = MessengerState::RequestingMessages;
@@ -255,6 +257,7 @@ void ModuleClient::updateGUI()
 			if (ImGui::Button("Clear inbox"))
 			{
 				messengerState = MessengerState::RequestingMessagesClear;
+				userMessageToDelete = senderBuf;
 			}
 
 			ImGui::Text("Inbox:");
@@ -274,6 +277,7 @@ void ModuleClient::updateGUI()
 					{
 						messengerState = MessengerState::RequestingClearOneMessage;
 						indexMessageToDelete = i - 1;
+						userMessageToDelete = senderBuf;
 					}
 					ImGui::TreePop();
 				}

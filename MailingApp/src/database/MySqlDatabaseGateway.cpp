@@ -3,6 +3,8 @@
 #include "../imgui/imgui.h"
 #include <cstdarg>
 
+#define _CRT_SECURE_NO_WARNINGS
+
 // You can use this function to create the SQL statements easily, works like the printf function
 std::string stringFormat(const char *fmt, ...)
 {
@@ -60,7 +62,7 @@ void MySqlDatabaseGateway::clearMessages(const std::string & username)
 
 		//sqlStatement to clear all messages
 		std::string sqlStatement;
-		sqlStatement = "test";
+		sqlStatement = "DELETE FROM MessengerServerDatabase WHERE receiver = " + username;
 
 		// insert some messages
 		db.sql(sqlStatement.c_str());
@@ -75,7 +77,7 @@ void MySqlDatabaseGateway::clearMessage(int index, const std::string & username)
 	{
 		DBResultSet res;
 		char buffer[20];
-		itoa(index, buffer, 10);
+		_itoa_s(index, buffer, 10);
 
 		//sqlStatement to clear an especific message
 		std::string sqlStatement;

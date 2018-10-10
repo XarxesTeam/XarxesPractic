@@ -4,6 +4,7 @@
 #include "ModuleClient.h"
 #include "ModuleServer.h"
 #include "ModuleLogView.h"
+#include "ModuleChat.h"
 #include "SocketUtils.h"
 
 #define ADD_MODULE(ModuleClass, moduleAttribute) \
@@ -20,11 +21,13 @@ Application::Application()
 	ADD_MODULE(ModuleClient, modClient);
 	ADD_MODULE(ModuleServer, modServer);
 	ADD_MODULE(ModuleLogView, modLogView);
+	ADD_MODULE(ModuleChat, modChat);
 
 	// Set active modules
 	modWindow->setActive(true);
 	modMainMenu->setActive(true);
 	modLogView->setActive(true);
+	modChat->setActive(true);
 }
 
 

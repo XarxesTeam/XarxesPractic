@@ -121,6 +121,7 @@ void ModuleServer::sendPacketQueryAllMessagesResponse(SOCKET socket, const std::
 		outStream.Write(messages[i].senderUsername);
 		outStream.Write(messages[i].subject);
 		outStream.Write(messages[i].body);
+		outStream.Write(messages[i].id);
 	}
 
 	sendPacket(socket, outStream);
@@ -133,6 +134,7 @@ void ModuleServer::onPacketReceivedSendMessage(SOCKET socket, const InputMemoryS
 	stream.Read(message.senderUsername);
 	stream.Read(message.subject);
 	stream.Read(message.body);
+	stream.Read(message.id);
 
 	// Insert the message in the database
 	database()->insertMessage(message);
@@ -148,13 +150,13 @@ void ModuleServer::onPackedReceivedClearUserMessages(SOCKET socket, const InputM
 
 void ModuleServer::onPackedReceivedClearUserOneMessage(SOCKET socket, const InputMemoryStream & stream)
 {
-	int index;
-	stream.Read(index);
+	int id;
+	stream.Read(id);
 
 	std::string username;
 	stream.Read(username);
 
-	database()->clearMessage(index,username);
+	database()->clearMessage(id,username);
 }
 
 void ModuleServer::sendPacket(SOCKET socket, OutputMemoryStream & stream)

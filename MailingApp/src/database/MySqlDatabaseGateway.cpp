@@ -42,10 +42,14 @@ void MySqlDatabaseGateway::insertMessage(const Message & message)
 	{
 		DBResultSet res;
 
+		char buffer[64];
+		_itoa_s(message.id, buffer, 10);
+
+
 		std::string sqlStatement;
 		// TODO: Create the SQL statement to insert the passed message into the DB (INSERT)
-		sqlStatement = "INSERT INTO MessengerServerDatabase (sender, receiver, subject, body) VALUES ('" + message.senderUsername + "', '"
-			+ message.receiverUsername + "', '" + message.subject + "', '" + message.body + "');";
+		sqlStatement = "INSERT INTO MessengerServerDatabase (sender, receiver, subject, body, id) VALUES ('" + message.senderUsername + "', '"
+			+ message.receiverUsername + "', '" + message.subject + "', '" + message.body + "', '" + buffer + "');";
 
 		// insert some messages
 		db.sql(sqlStatement.c_str());
@@ -62,26 +66,27 @@ void MySqlDatabaseGateway::clearMessages(const std::string & username)
 
 		//sqlStatement to clear all messages
 		std::string sqlStatement;
-		sqlStatement = "DELETE FROM MessengerServerDatabase WHERE receiver = " + username;
+		sqlStatement = "DELETE FROM MessengerServerDatabase WHERE receiver = '" + username +"'";
 
 		// insert some messages
 		db.sql(sqlStatement.c_str());
 	}
 }
 
-void MySqlDatabaseGateway::clearMessage(int index, const std::string & username)
+void MySqlDatabaseGateway::clearMessage(int id, const std::string & username)
 {
 	DBConnection db(bufMySqlHost, bufMySqlPort, bufMySqlDatabase, bufMySqlUsername, bufMySqlPassword);
 
 	if (db.isConnected())
 	{
 		DBResultSet res;
-		char buffer[20];
-		_itoa_s(index, buffer, 10);
+
+		char buffer[64];
+		_itoa_s(id, buffer, 10);
 
 		//sqlStatement to clear an especific message
 		std::string sqlStatement;
-		sqlStatement = "DELETE * FROM MessengerServerDatabase(sender, receiver, subject, body, id) WHERE receiver = " + username + " AND id = " + buffer;
+		sqlStatement = "DELETE FROM MessengerServerDatabase WHERE receiver = '" + username + "' AND id = '" + buffer + "'";
 		
 		// insert some messages
 		db.sql(sqlStatement.c_str());

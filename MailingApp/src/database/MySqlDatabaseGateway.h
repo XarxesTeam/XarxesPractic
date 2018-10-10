@@ -18,7 +18,7 @@ public:
 
 	void insertMessage(const Message &message) override;
 	virtual void clearMessages(const std::string & username) override;
-	virtual void clearMessage(int index, const std::string & username) override;
+	virtual void clearMessage(int id, const std::string & username) override;
 
 	std::vector<Message> getAllMessagesReceivedByUser(const std::string &username) override;
 

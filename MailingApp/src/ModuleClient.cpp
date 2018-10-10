@@ -50,7 +50,7 @@ void ModuleClient::updateMessenger()
 		sendPacketClearMessages();
 		break;
 	case ModuleClient::MessengerState::RequestingClearOneMessage:
-		sendPacketClearMessages(indexMessageToDelete);
+		sendPacketClearMessages(idMessageToDelete);
 		break;
 	case ModuleClient::MessengerState::ReceivingMessages:
 		// Idle, do nothing
@@ -104,6 +104,8 @@ void ModuleClient::onPacketReceivedQueryAllMessagesResponse(const InputMemoryStr
 		stream.Read(new_message.senderUsername);
 		stream.Read(new_message.subject);
 		stream.Read(new_message.body);
+		stream.Read(new_message.id);
+
 		messages.push_back(new_message);
 	}
 
@@ -134,10 +136,10 @@ void ModuleClient::sendPacketQueryMessages()
 	messengerState = MessengerState::ReceivingMessages;
 }
 
-void ModuleClient::sendPacketClearMessages(int index)
+void ModuleClient::sendPacketClearMessages(int id)
 {
 	OutputMemoryStream stream;
-	if (index == -1)
+	if (id == -1)
 	{
 		// TODO: Serialize message (only the packet type)
 		stream.Write(PacketType::ClearAllMessagesRequest);
@@ -146,7 +148,8 @@ void ModuleClient::sendPacketClearMessages(int index)
 	else
 	{
 		stream.Write(PacketType::ClearOneMessage);
-		stream.Write(index);
+		
+		stream.Write(idMessageToDelete);
 	}
 
 	stream.Write(std::string(userMessageToDelete));
@@ -167,6 +170,10 @@ void ModuleClient::sendPacketSendMessage(const char * receiver, const char * sub
 	stream.Write(std::string(senderBuf));
 	stream.Write(std::string(subject));
 	stream.Write(std::string(message));
+
+	int rand_val = rand();
+	
+	stream.Write(rand_val);
 
 	sendPacket(stream);
 
@@ -276,7 +283,7 @@ void ModuleClient::updateGUI()
 					if (ImGui::Button("Delete this message"))
 					{
 						messengerState = MessengerState::RequestingClearOneMessage;
-						indexMessageToDelete = i - 1;
+						idMessageToDelete = message.id;
 						userMessageToDelete = senderBuf;
 					}
 					ImGui::TreePop();

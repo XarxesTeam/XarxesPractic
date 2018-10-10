@@ -8,5 +8,5 @@ struct Message
 	std::string receiverUsername;
 	std::string subject;
 	std::string body;
-	int id = 0;
+	int id;
 };

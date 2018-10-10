@@ -20,7 +20,7 @@ public:
 
 	virtual void clearMessages(const std::string & username) = 0;
 	
-	virtual void clearMessage(int index, const std::string & username) = 0;
+	virtual void clearMessage(int index, const std::string & username) {};
 	
 	virtual std::vector<Message> getAllMessagesReceivedByUser(const std::string &username) = 0;
 

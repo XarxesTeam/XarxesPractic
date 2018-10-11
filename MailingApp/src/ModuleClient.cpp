@@ -2,9 +2,20 @@
 #include "Log.h"
 #include "imgui/imgui.h"
 #include "serialization/PacketTypes.h"
+#include "Console.h"
 
 #define HEADER_SIZE sizeof(uint32_t)
 #define RECV_CHUNK_SIZE 4096
+
+ModuleClient::ModuleClient()
+{
+	chat_console = new Console(this);
+}
+
+ModuleClient::~ModuleClient()
+{
+	delete chat_console;
+}
 
 bool ModuleClient::update()
 {
@@ -34,6 +45,17 @@ bool ModuleClient::cleanUp()
 {
 	disconnectFromServer();
 	return true;
+}
+
+void ModuleClient::_SendGlobalMessage(const char * body)
+{
+	strcpy_s(messageBuf, sizeof(body), body);
+	char rec[10] = "all";
+	strcpy_s(receiverBuf, sizeof(rec), rec);
+	char sub[30] = "global_message";
+	strcpy_s(subjectBuf, sizeof(sub), sub);
+
+	messengerState = MessengerState::SendingMessage;
 }
 
 void ModuleClient::updateMessenger()
@@ -291,6 +313,11 @@ void ModuleClient::updateGUI()
 				ImGui::PopID();
 			}
 		}
+
+		//Draw chat console
+		bool f = true;
+		chat_console->_Draw("hola", &f);
+		
 	}
 
 	ImGui::End();

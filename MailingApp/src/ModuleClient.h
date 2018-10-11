@@ -4,16 +4,28 @@
 #include "SocketUtils.h"
 #include "database/DatabaseTypes.h"
 #include "serialization/MemoryStream.h"
+class Console;
 
 class ModuleClient : public Module
 {
 public:
+
+	//Constructor
+	ModuleClient();
+
+	//Destructor
+	~ModuleClient();
 
 	// Virtual methods from parent class Module
 
 	bool update() override;
 
 	bool cleanUp() override;
+
+	// Chat console
+	Console* chat_console = nullptr;
+
+	void _SendGlobalMessage(const char* body);
 
 private:
 
@@ -72,7 +84,6 @@ private:
 
 	// Socket to connect to the server
 	SOCKET connSocket;
-
 
 	// Current screen of the messenger app
 	enum class MessengerState

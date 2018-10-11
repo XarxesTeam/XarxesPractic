@@ -15,4 +15,15 @@ public:
 	bool postUpdate() override;
 
 	bool cleanUp() override;
+
+private:
+
+	int width = 600;
+	int height = 800;
+
+public:
+
+	int GetWidth() { return width; }
+	int GetHeight() { return height; }
+
 };

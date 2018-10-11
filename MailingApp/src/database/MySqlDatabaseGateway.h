@@ -21,6 +21,7 @@ public:
 	virtual void clearMessage(int id, const std::string & username) override;
 
 	std::vector<Message> getAllMessagesReceivedByUser(const std::string &username) override;
+	std::vector<Message> getAllMessagesReceivedByChat() override;
 
 	virtual void updateGUI() override;
 

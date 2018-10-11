@@ -254,6 +254,8 @@ void ModuleClient::updateGUI()
 			if (state == ClientState::Connected)
 			{
 				state = ClientState::Disconnecting;
+				
+				chat_console->ClearLog();
 			}
 		}
 

@@ -24,6 +24,8 @@ public:
 	
 	virtual std::vector<Message> getAllMessagesReceivedByUser(const std::string &username) = 0;
 
+	virtual std::vector<Message> getAllMessagesReceivedByChat() { return std::vector<Message>(); };
+
 	virtual void updateGUI() { }
 };
 

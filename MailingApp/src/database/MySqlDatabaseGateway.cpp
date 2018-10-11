@@ -124,6 +124,11 @@ std::vector<Message> MySqlDatabaseGateway::getAllMessagesReceivedByUser(const st
 	return messages;
 }
 
+std::vector<Message> MySqlDatabaseGateway::getAllMessagesReceivedByChat()
+{
+	return getAllMessagesReceivedByUser("all");
+}
+
 void MySqlDatabaseGateway::updateGUI()
 {
 	ImGui::Separator();

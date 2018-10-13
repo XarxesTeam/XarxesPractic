@@ -9,4 +9,5 @@ struct Message
 	std::string subject;
 	std::string body;
 	int id;
+	std::string timeDate;
 };

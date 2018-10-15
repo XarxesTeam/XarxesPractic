@@ -24,7 +24,7 @@ void SimulatedDatabaseGateway::clearMessages(const std::string & username)
 void SimulatedDatabaseGateway::clearMessage(int index, const std::string & username)
 {
 	std::vector<Message>::const_iterator it = allMessages.begin();
-	for (int i = 0; i < index; i++)
+	while (it->id != index && it != allMessages.end())
 		it++;
 
 	allMessages.erase(it);

@@ -127,8 +127,8 @@ void ModuleClient::onPacketReceivedQueryAllMessagesResponse(const InputMemoryStr
 		stream.Read(new_message.senderUsername);
 		stream.Read(new_message.subject);
 		stream.Read(new_message.body);
-		stream.Read(new_message.id);
 		stream.Read(new_message.timeDate);
+		stream.Read(new_message.id);
 
 		messages.push_back(new_message);
 	}
@@ -203,7 +203,8 @@ void ModuleClient::sendPacketSendMessage(const char * receiver, const char * sub
 	int year = localTime->tm_year + 1900; // Year is # years since 1900
 	int hour = localTime->tm_hour;
 	int min = localTime->tm_min;
-	stream.Write(std::string(std::to_string(hour) + ":" + std::to_string(min) + "; " + std::to_string(day) + "-" + std::to_string(month) + "-" + std::to_string(year)));
+	std::string timeDate = (std::to_string(hour) + ":" + std::to_string(min) + "; " + std::to_string(day) + "-" + std::to_string(month) + "-" + std::to_string(year));
+	stream.Write(timeDate);
 
 	int rand_val = rand();
 	

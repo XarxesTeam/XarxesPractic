@@ -1,3 +1,4 @@
+#include <time.h>
 #include "ModuleClient.h"
 #include "Log.h"
 #include "imgui/imgui.h"
@@ -126,6 +127,7 @@ void ModuleClient::onPacketReceivedQueryAllMessagesResponse(const InputMemoryStr
 		stream.Read(new_message.senderUsername);
 		stream.Read(new_message.subject);
 		stream.Read(new_message.body);
+		stream.Read(new_message.timeDate);
 		stream.Read(new_message.id);
 
 		messages.push_back(new_message);
@@ -192,6 +194,17 @@ void ModuleClient::sendPacketSendMessage(const char * receiver, const char * sub
 	stream.Write(std::string(senderBuf));
 	stream.Write(std::string(subject));
 	stream.Write(std::string(message));
+
+	time_t theTime = time(NULL);
+	struct tm *localTime = localtime(&theTime);
+
+	int day = localTime->tm_mday;
+	int month = localTime->tm_mon + 1; // Month is 0 – 11, add 1 to get a jan-dec 1-12 concept
+	int year = localTime->tm_year + 1900; // Year is # years since 1900
+	int hour = localTime->tm_hour;
+	int min = localTime->tm_min;
+	std::string timeDate = (std::to_string(hour) + ":" + std::to_string(min) + "; " + std::to_string(day) + "-" + std::to_string(month) + "-" + std::to_string(year));
+	stream.Write(timeDate);
 
 	int rand_val = rand();
 	
@@ -303,6 +316,7 @@ void ModuleClient::updateGUI()
 				ImGui::PushID(i++);
 				if (ImGui::TreeNode(&message, "%s - %s", message.senderUsername.c_str(), message.subject.c_str()))
 				{
+					ImGui::Text("%s", message.timeDate.c_str());
 					ImGui::TextWrapped("%s", message.body.c_str());
 					if (ImGui::Button("Delete this message"))
 					{

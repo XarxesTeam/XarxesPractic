@@ -57,10 +57,10 @@ void Console::_Draw(const char * title, bool * p_open)
 	}
 
 	//Console Buttons
-	if (ImGui::SmallButton("Clear"))
+	/*if (ImGui::SmallButton("Clear"))
 	{
 		ClearLog();
-	}
+	}*/
 	ImGui::SameLine();
 	if (ImGui::SmallButton("Scroll to bottom"))
 	{
@@ -75,14 +75,18 @@ void Console::_Draw(const char * title, bool * p_open)
 	ImGui::PopStyleVar();
 
 	ImGui::BeginChild("ScrollingRegion", ImVec2(0, -ImGui::GetItemsLineHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
-	if (ImGui::BeginPopupContextWindow())
-	{
-		if (ImGui::Selectable("Clear"))
+	
+	
+	/*
+		if (ImGui::BeginPopupContextWindow())
 		{
-			ClearLog();
+			if (ImGui::Selectable("Clear"))
+			{
+				ClearLog();
+			}
+			ImGui::EndPopup();
 		}
-		ImGui::EndPopup();
-	}
+	*/
 
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1));
 
@@ -108,17 +112,20 @@ void Console::_Draw(const char * title, bool * p_open)
 	ImGui::EndChild();
 	ImGui::Separator();
 
-	// Command-line
-	strcpy_s(InputBuf, static_buffer.c_str());
-	if (ImGui::InputText("Input", InputBuf, IM_ARRAYSIZE(InputBuf), ImGuiInputTextFlags_EnterReturnsTrue, &_TextEditCallbackStub, (void*)this))
+	if (target != nullptr)
 	{
-		char* input_end = InputBuf + strlen(InputBuf);
-		while (input_end > InputBuf && input_end[-1] == ' ') input_end--; *input_end = 0;
-		if (InputBuf[0])
+		// Command-line
+		strcpy_s(InputBuf, static_buffer.c_str());
+		if (ImGui::InputText("Input", InputBuf, IM_ARRAYSIZE(InputBuf), ImGuiInputTextFlags_EnterReturnsTrue, &_TextEditCallbackStub, (void*)this))
 		{
-			ExecCommand(InputBuf);
+			char* input_end = InputBuf + strlen(InputBuf);
+			while (input_end > InputBuf && input_end[-1] == ' ') input_end--; *input_end = 0;
+			if (InputBuf[0])
+			{
+				ExecCommand(InputBuf);
+			}
+			strcpy_s(InputBuf, "");
 		}
-		strcpy_s(InputBuf, "");
 	}
 
 	// Demonstrate keeping auto focus on the input box
@@ -132,9 +139,12 @@ void Console::_Draw(const char * title, bool * p_open)
 
 void Console::ExecCommand(const char * command_line)
 {
-	AddLog("# %s\n", command_line);
+	if (target != nullptr)
+	{
+		AddLog("# %s\n", command_line);
 
-	target->_SendGlobalMessage(command_line);
+		target->_SendGlobalMessage(command_line);
+	}
 
 	// Insert into history. First find match and delete it so it can be pushed to the back. This isn't trying to be smart or optimal.
 	/*HistoryPos = -1;

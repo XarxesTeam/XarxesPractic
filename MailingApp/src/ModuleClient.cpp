@@ -335,9 +335,8 @@ void ModuleClient::updateGUI()
 		}
 
 		//Draw chat console
-		bool f = true;
-		chat_console->_Draw("hola", &f);
-		
+		bool open = true;
+		chat_console->_Draw("Chat", &open);
 	}
 
 	ImGui::End();

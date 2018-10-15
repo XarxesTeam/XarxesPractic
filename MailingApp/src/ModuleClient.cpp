@@ -203,7 +203,11 @@ void ModuleClient::sendPacketSendMessage(const char * receiver, const char * sub
 	int year = localTime->tm_year + 1900; // Year is # years since 1900
 	int hour = localTime->tm_hour;
 	int min = localTime->tm_min;
-	std::string timeDate = (std::to_string(hour) + ":" + std::to_string(min) + "; " + std::to_string(day) + "-" + std::to_string(month) + "-" + std::to_string(year));
+	std::string timeDate;
+	if (min < 10)
+		timeDate = (std::to_string(hour) + ":0" + std::to_string(min) + "; " + std::to_string(day) + "-" + std::to_string(month) + "-" + std::to_string(year));
+	else
+		timeDate = (std::to_string(hour) + ":" + std::to_string(min) + "; " + std::to_string(day) + "-" + std::to_string(month) + "-" + std::to_string(year));
 	stream.Write(timeDate);
 
 	int rand_val = rand();

@@ -23,6 +23,7 @@ public:
 	void clearMessage(int index, const std::string & username) override;
 
 	std::vector<Message> getAllMessagesReceivedByUser(const std::string &username) override;
+	std::vector<Message> getAllMessagesReceivedByChat() override;
 
 private:
 

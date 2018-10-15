@@ -4,7 +4,7 @@
 #include "serialization/PacketTypes.h"
 #include "database/MySqlDatabaseGateway.h"
 #include "database/SimulatedDatabaseGateway.h"
-
+#include "Console.h"
 
 static bool g_SimulateDatabaseConnection = true;
 
@@ -17,6 +17,7 @@ ModuleServer::ModuleServer()
 {
 	mysqlDatabaseGateway = new MySqlDatabaseGateway();
 	simulatedDatabaseGateway = new SimulatedDatabaseGateway();
+	global_chat_console = new Console(nullptr);
 }
 
 ModuleServer::~ModuleServer()
@@ -84,6 +85,16 @@ void ModuleServer::onPacketReceived(SOCKET socket, const InputMemoryStream & str
 		LOG("Unknown packet type received");
 		break;
 	}
+
+	//Update console
+	global_chat_console->ClearLog();
+	std::vector<Message> chat_msg = database()->getAllMessagesReceivedByChat();
+	int size = chat_msg.size();
+	for (int k = 0; k < size; k++)
+	{
+		global_chat_console->AddLog(chat_msg[k].body.c_str());
+	}
+
 }
 
 void ModuleServer::onPacketReceivedLogin(SOCKET socket, const InputMemoryStream & stream)
@@ -216,6 +227,28 @@ void ModuleServer::updateGUI()
 		}
 
 		database()->updateGUI();
+
+		if(ImGui::Button("Refresh"))
+		{
+			//Update console
+			global_chat_console->ClearLog();
+			std::vector<Message> chat_msg = database()->getAllMessagesReceivedByChat();
+			int size = chat_msg.size();
+			for (int k = 0; k < size; k++)
+			{
+				global_chat_console->AddLog(chat_msg[k].body.c_str());
+			}
+		}
+
+		if (ImGui::Button("Clear"))
+		{
+			//Update console
+			global_chat_console->ClearLog();
+			database()->clearMessages("all");
+		}
+
+		bool open = true;
+		global_chat_console->_Draw("Global Chat", &open);
 	}
 
 	ImGui::End();

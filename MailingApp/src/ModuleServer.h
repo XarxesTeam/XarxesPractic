@@ -6,6 +6,7 @@
 #include <list>
 
 class IDatabaseGateway;
+class Console;
 
 class ModuleServer : public Module
 {
@@ -83,6 +84,7 @@ private:
 
 	IDatabaseGateway *database();
 
+	Console* global_chat_console = nullptr;
 
 	// Data members
 

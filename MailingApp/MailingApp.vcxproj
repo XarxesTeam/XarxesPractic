@@ -129,7 +129,6 @@
     <ClCompile Include="src\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\ModuleChat.cpp" />
     <ClCompile Include="src\ModuleClient.cpp" />
     <ClCompile Include="src\ModuleLogView.cpp" />
     <ClCompile Include="src\ModuleMainMenu.cpp" />
@@ -156,7 +155,6 @@
     <ClInclude Include="src\imgui\imstb_truetype.h" />
     <ClInclude Include="src\Log.h" />
     <ClInclude Include="src\Module.h" />
-    <ClInclude Include="src\ModuleChat.h" />
     <ClInclude Include="src\ModuleClient.h" />
     <ClInclude Include="src\ModuleLogView.h" />
     <ClInclude Include="src\ModuleMainMenu.h" />

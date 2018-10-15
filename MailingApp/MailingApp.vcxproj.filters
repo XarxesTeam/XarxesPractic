@@ -90,9 +90,6 @@
     <ClCompile Include="src\serialization\MemoryStream.cpp">
       <Filter>Source Files\serialization</Filter>
     </ClCompile>
-    <ClCompile Include="src\ModuleChat.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Console.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -172,9 +169,6 @@
     </ClInclude>
     <ClInclude Include="src\serialization\PacketTypes.h">
       <Filter>Header Files\serialization</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ModuleChat.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Console.h">
       <Filter>Header Files</Filter>

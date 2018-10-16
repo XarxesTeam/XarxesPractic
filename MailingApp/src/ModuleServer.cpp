@@ -72,8 +72,12 @@ void ModuleServer::onPacketReceived(SOCKET socket, const InputMemoryStream & str
 	case PacketType::QueryAllMessagesRequest:
 		onPacketReceivedQueryAllMessages(socket, stream);
 		break;
+	case PacketType::QueryAllChatMessagesRequest:
+		onPacketReceivedQueryAllChatMessages(socket, stream);
+		break;
 	case PacketType::SendMessageRequest:
 		onPacketReceivedSendMessage(socket, stream);
+		send_global_message = true;
 		break;
 	case PacketType::ClearAllMessagesRequest:
 		onPackedReceivedClearUserMessages(socket, stream);
@@ -114,6 +118,13 @@ void ModuleServer::onPacketReceivedQueryAllMessages(SOCKET socket, const InputMe
 	sendPacketQueryAllMessagesResponse(socket, clientStateInfo.loginName);
 }
 
+void ModuleServer::onPacketReceivedQueryAllChatMessages(SOCKET socket, const InputMemoryStream & stream)
+{
+	// Get the username of this socket and send the response to it
+	ClientStateInfo & clientStateInfo = getClientStateInfoForSocket(socket);
+	sendPacketQueryAllChatMessagesResponse(socket);
+}
+
 void ModuleServer::sendPacketQueryAllMessagesResponse(SOCKET socket, const std::string &username)
 {
 	// Obtain the list of messages from the DB
@@ -123,6 +134,31 @@ void ModuleServer::sendPacketQueryAllMessagesResponse(SOCKET socket, const std::
 	// TODO: Create QueryAllMessagesResponse and serialize all the messages
 
 	outStream.Write(PacketType::QueryAllMessagesResponse);
+	uint32_t messageCount = messages.size();
+
+	outStream.Write(messageCount);
+	for (int i = 0; i < messageCount; i++)
+	{
+		outStream.Write(messages[i].receiverUsername);
+		outStream.Write(messages[i].senderUsername);
+		outStream.Write(messages[i].subject);
+		outStream.Write(messages[i].body);
+		outStream.Write(messages[i].timeDate);
+		outStream.Write(messages[i].id);
+	}
+
+	sendPacket(socket, outStream);
+}
+
+void ModuleServer::sendPacketQueryAllChatMessagesResponse(SOCKET socket)
+{
+	// Obtain the list of messages from the DB
+	std::vector<Message> messages = database()->getAllMessagesReceivedByUser("all");
+
+	OutputMemoryStream outStream;
+	// TODO: Create QueryAllMessagesResponse and serialize all the messages
+
+	outStream.Write(PacketType::QueryAllChatMessagesResponse);
 	uint32_t messageCount = messages.size();
 
 	outStream.Write(messageCount);

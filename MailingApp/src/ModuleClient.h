@@ -4,6 +4,8 @@
 #include "SocketUtils.h"
 #include "database/DatabaseTypes.h"
 #include "serialization/MemoryStream.h"
+#include <ctime>
+
 class Console;
 
 class ModuleClient : public Module
@@ -37,9 +39,13 @@ private:
 
 	void onPacketReceivedQueryAllMessagesResponse(const InputMemoryStream &stream);
 
+	void onPacketReceivedQueryAllChatMessagesResponse(const InputMemoryStream &stream);
+
 	void sendPacketLogin(const char *username);
 
 	void sendPacketQueryMessages();
+
+	void sendPacketQueryChatMessages();
 
 	void sendPacketClearMessages(int id = -1);
 
@@ -52,6 +58,10 @@ private:
 
 	void updateGUI();
 
+	// Chat 
+
+	clock_t time_req;
+	int tot_time = 0;
 
 	// Low-level networking stuff
 
@@ -93,9 +103,11 @@ private:
 		RequestingMessagesClear,
 		RequestingClearOneMessage,
 		ReceivingMessages,
+		ReceivingChatMessages,
 		ShowingMessages,
 		ComposingMessage,
-		SendingMessage
+		SendingMessage,
+		SendingGlobalMessage
 	};
 
 	// Current screen of the messenger application

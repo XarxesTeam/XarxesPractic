@@ -4,6 +4,8 @@
 #include "imgui/imgui.h"
 #include "serialization/PacketTypes.h"
 #include "Console.h"
+#include "Application.h"
+#include "ModuleServer.h"
 
 #define HEADER_SIZE sizeof(uint32_t)
 #define RECV_CHUNK_SIZE 4096
@@ -50,13 +52,14 @@ bool ModuleClient::cleanUp()
 
 void ModuleClient::_SendGlobalMessage(const char * body)
 {
+	int size = sizeof(body);
 	strcpy_s(messageBuf, sizeof(body), body);
 	char rec[10] = "all";
 	strcpy_s(receiverBuf, sizeof(rec), rec);
 	char sub[30] = "global_message";
 	strcpy_s(subjectBuf, sizeof(sub), sub);
 
-	messengerState = MessengerState::SendingMessage;
+	messengerState = MessengerState::SendingGlobalMessage;
 }
 
 void ModuleClient::updateMessenger()
@@ -78,6 +81,9 @@ void ModuleClient::updateMessenger()
 	case ModuleClient::MessengerState::ReceivingMessages:
 		// Idle, do nothing
 		break;
+	case ModuleClient::MessengerState::ReceivingChatMessages:
+		// Idle, do nothing
+		break;
 	case ModuleClient::MessengerState::ShowingMessages:
 		// Idle, do nothing
 		break;
@@ -85,6 +91,9 @@ void ModuleClient::updateMessenger()
 		// Idle, do nothing
 		break;
 	case ModuleClient::MessengerState::SendingMessage:
+		sendPacketSendMessage(receiverBuf, subjectBuf, messageBuf);
+		break;
+	case ModuleClient::MessengerState::SendingGlobalMessage:
 		sendPacketSendMessage(receiverBuf, subjectBuf, messageBuf);
 		break;
 	default:
@@ -101,7 +110,10 @@ void ModuleClient::onPacketReceived(const InputMemoryStream & stream)
 
 	switch (packetType)
 	{
-	case PacketType::QueryAllMessagesResponse:
+	case PacketType::QueryAllChatMessagesResponse:
+		onPacketReceivedQueryAllChatMessagesResponse(stream);
+		break;
+	case PacketType::QueryAllMessagesRequest:
 		onPacketReceivedQueryAllMessagesResponse(stream);
 		break;
 	default:
@@ -133,6 +145,35 @@ void ModuleClient::onPacketReceivedQueryAllMessagesResponse(const InputMemoryStr
 		messages.push_back(new_message);
 	}
 
+	
+
+	messengerState = MessengerState::ShowingMessages;
+}
+
+void ModuleClient::onPacketReceivedQueryAllChatMessagesResponse(const InputMemoryStream & stream)
+{
+	uint32_t messageCount;
+	// TODO: Deserialize the number of messages
+	stream.Read(messageCount);
+
+	// TODO: Deserialize messages one by one and push_back them into the messages vector
+	// NOTE: The messages vector is an attribute of this class
+	chat_console->ClearLog();
+
+	for (int i = 0; i < messageCount; i++)
+	{
+		Message new_message;
+		stream.Read(new_message.receiverUsername);
+		stream.Read(new_message.senderUsername);
+		stream.Read(new_message.subject);
+		stream.Read(new_message.body);
+		stream.Read(new_message.timeDate);
+		stream.Read(new_message.id);
+
+		chat_console->AddLog(new_message.body.c_str());
+
+	}
+
 	messengerState = MessengerState::ShowingMessages;
 }
 
@@ -158,6 +199,18 @@ void ModuleClient::sendPacketQueryMessages()
 	sendPacket(stream);
 
 	messengerState = MessengerState::ReceivingMessages;
+}
+
+void ModuleClient::sendPacketQueryChatMessages()
+{
+	OutputMemoryStream stream;
+
+	// TODO: Serialize message (only the packet type)
+	stream.Write(PacketType::QueryAllChatMessagesRequest);
+	// TODO: Use sendPacket() to send the packet
+	sendPacket(stream);
+
+	messengerState = MessengerState::ReceivingChatMessages;
 }
 
 void ModuleClient::sendPacketClearMessages(int id)
@@ -236,8 +289,10 @@ void ModuleClient::sendPacket(const OutputMemoryStream & stream)
 
 void ModuleClient::updateGUI()
 {
-	ImGui::Begin("Client Window");
+	time_req = clock() - time_req;
+	tot_time += time_req;
 
+	ImGui::Begin("Client Window");
 
 	if (state == ClientState::Disconnected)
 	{
@@ -290,7 +345,7 @@ void ModuleClient::updateGUI()
 				messengerState = MessengerState::ShowingMessages;
 			}
 		}
-		else if (messengerState == MessengerState::ShowingMessages)
+		else if (messengerState == MessengerState::ShowingMessages || messengerState == MessengerState::SendingGlobalMessage || messengerState == MessengerState::ReceivingChatMessages)
 		{
 			if (ImGui::Button("Compose message"))
 			{
@@ -334,6 +389,13 @@ void ModuleClient::updateGUI()
 			}
 		}
 
+		if (tot_time > 1000)
+		{
+			//Update console
+			sendPacketQueryChatMessages();
+			tot_time = 0;
+		}
+		
 		//Draw chat console
 		bool open = true;
 		chat_console->_Draw("Chat", &open);
@@ -341,6 +403,7 @@ void ModuleClient::updateGUI()
 
 	ImGui::End();
 
+	time_req = clock();
 }
 
 
@@ -373,6 +436,8 @@ void ModuleClient::connectToServer()
 		LOG("Server connected to %s:%d", serverIP, serverPort);
 
 		messengerState = MessengerState::SendingLogin;
+
+		time_req = clock();
 	}
 
 	// Set non-blocking socket

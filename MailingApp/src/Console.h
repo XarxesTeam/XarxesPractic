@@ -41,12 +41,5 @@ public:
 	void					AddLog(const char* fmt, ...);
 	void					_Draw(const char* title, bool* p_open);
 	void					ExecCommand(const char* command_line);
-	static int				_TextEditCallbackStub(ImGuiTextEditCallbackData* data); // In C++11 you are better off using lambdas for this sort of forwarding callbacks
-	int						_TextEditCallback(ImGuiTextEditCallbackData* data);
-
 };
-
-static int	_TextEditCallbackStubss(ImGuiTextEditCallbackData* data); // In C++11 you are better off using lambdas for this sort of forwarding callbacks
-static void ShowExampleAppConsole(bool* p_open);
-
 #endif // !_BASIC_CONSOLE_H_

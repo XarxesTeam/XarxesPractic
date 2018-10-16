@@ -25,6 +25,8 @@ public:
 
 	bool cleanUp() override;
 
+	bool send_global_message = false;
+
 private:
 
 	// Methods involving serialization / deserialization (contain TODOs)
@@ -34,6 +36,8 @@ private:
 	void onPacketReceivedLogin(SOCKET socket, const InputMemoryStream& stream);
 
 	void onPacketReceivedQueryAllMessages(SOCKET socket, const InputMemoryStream& stream);
+
+	void onPacketReceivedQueryAllChatMessages(SOCKET socket, const InputMemoryStream& stream);
 	
 	void onPacketReceivedSendMessage(SOCKET socket, const InputMemoryStream& stream);
 	
@@ -42,6 +46,8 @@ private:
 	void onPackedReceivedClearUserOneMessage(SOCKET socket, const InputMemoryStream& stream);
 
 	void sendPacketQueryAllMessagesResponse(SOCKET socket, const std::string &username);
+
+	void sendPacketQueryAllChatMessagesResponse(SOCKET socket);
 
 	void sendPacket(SOCKET socket, OutputMemoryStream& stream);
 

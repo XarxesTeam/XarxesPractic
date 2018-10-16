@@ -36,9 +36,16 @@ bool ModuleServer::update()
 		startServer();
 		break;
 	case ServerState::Running:
+		if (send_global_message)
+		{
+			QueryAllChatMessagesToAll();
+			send_global_message = false;
+		}
+
 		handleIncomingData();
 		handleOutgoingData();
 		deleteInvalidSockets();
+		
 		break;
 	case ServerState::Stopping:
 		stopServer();
@@ -68,6 +75,7 @@ void ModuleServer::onPacketReceived(SOCKET socket, const InputMemoryStream & str
 	{
 	case PacketType::LoginRequest:
 		onPacketReceivedLogin(socket, stream);
+		send_global_message = true;
 		break;
 	case PacketType::QueryAllMessagesRequest:
 		onPacketReceivedQueryAllMessages(socket, stream);
@@ -121,8 +129,18 @@ void ModuleServer::onPacketReceivedQueryAllMessages(SOCKET socket, const InputMe
 void ModuleServer::onPacketReceivedQueryAllChatMessages(SOCKET socket, const InputMemoryStream & stream)
 {
 	// Get the username of this socket and send the response to it
-	ClientStateInfo & clientStateInfo = getClientStateInfoForSocket(socket);
+	//ClientStateInfo & clientStateInfo = getClientStateInfoForSocket(socket);
 	sendPacketQueryAllChatMessagesResponse(socket);
+}
+
+void ModuleServer::QueryAllChatMessagesToAll()
+{
+	std::list<ClientStateInfo>::const_iterator iterator = clients.begin();
+	while (iterator != clients.end())
+	{
+		sendPacketQueryAllChatMessagesResponse(clients.begin()._Ptr->_Myval.socket);
+		iterator++;
+	}
 }
 
 void ModuleServer::sendPacketQueryAllMessagesResponse(SOCKET socket, const std::string &username)

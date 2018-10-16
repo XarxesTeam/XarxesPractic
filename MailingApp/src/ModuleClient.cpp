@@ -392,7 +392,7 @@ void ModuleClient::updateGUI()
 		if (tot_time > 1000)
 		{
 			//Update console
-			sendPacketQueryChatMessages();
+			//sendPacketQueryChatMessages();
 			tot_time = 0;
 		}
 		

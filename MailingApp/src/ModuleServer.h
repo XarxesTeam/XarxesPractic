@@ -38,6 +38,8 @@ private:
 	void onPacketReceivedQueryAllMessages(SOCKET socket, const InputMemoryStream& stream);
 
 	void onPacketReceivedQueryAllChatMessages(SOCKET socket, const InputMemoryStream& stream);
+
+	void QueryAllChatMessagesToAll();
 	
 	void onPacketReceivedSendMessage(SOCKET socket, const InputMemoryStream& stream);
 	

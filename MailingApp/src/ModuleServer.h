@@ -26,6 +26,7 @@ public:
 	bool cleanUp() override;
 
 	bool send_global_message = false;
+	int k = 0;
 
 private:
 

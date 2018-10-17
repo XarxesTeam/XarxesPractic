@@ -139,7 +139,7 @@ void ModuleClient::onPacketReceivedQueryAllMessagesResponse(const InputMemoryStr
 		stream.Read(new_message.senderUsername);
 		stream.Read(new_message.subject);
 		stream.Read(new_message.body);
-		stream.Read(new_message.timeDate);
+		stream.Read(new_message.time);
 		stream.Read(new_message.id);
 
 		messages.push_back(new_message);
@@ -167,7 +167,7 @@ void ModuleClient::onPacketReceivedQueryAllChatMessagesResponse(const InputMemor
 		stream.Read(new_message.senderUsername);
 		stream.Read(new_message.subject);
 		stream.Read(new_message.body);
-		stream.Read(new_message.timeDate);
+		stream.Read(new_message.time);
 		stream.Read(new_message.id);
 
 		chat_console->AddLog(new_message.body.c_str());
@@ -256,12 +256,13 @@ void ModuleClient::sendPacketSendMessage(const char * receiver, const char * sub
 	int year = localTime->tm_year + 1900; // Year is # years since 1900
 	int hour = localTime->tm_hour;
 	int min = localTime->tm_min;
+	int sec = localTime->tm_sec;
 	std::string timeDate;
 	if (min < 10)
-		timeDate = (std::to_string(hour) + ":0" + std::to_string(min) + "; " + std::to_string(day) + "-" + std::to_string(month) + "-" + std::to_string(year));
+		timeDate = (std::to_string(hour) + ":0" + std::to_string(min) + ":" + std::to_string(sec) + "-" + std::to_string(day) + "-" + std::to_string(month) + "-" + std::to_string(year));
 	else
-		timeDate = (std::to_string(hour) + ":" + std::to_string(min) + "; " + std::to_string(day) + "-" + std::to_string(month) + "-" + std::to_string(year));
-	stream.Write(timeDate);
+		timeDate = (std::to_string(hour) + ":" + std::to_string(min) + ":" + std::to_string(sec) + "-" + std::to_string(day) + "-" + std::to_string(month) + "-" + std::to_string(year));
+	stream.Write(std::string(timeDate));
 
 	int rand_val = rand();
 	
@@ -375,7 +376,7 @@ void ModuleClient::updateGUI()
 				ImGui::PushID(i++);
 				if (ImGui::TreeNode(&message, "%s - %s", message.senderUsername.c_str(), message.subject.c_str()))
 				{
-					ImGui::Text("%s", message.timeDate.c_str());
+					ImGui::Text("%s", message.time.c_str());
 					ImGui::TextWrapped("%s", message.body.c_str());
 					if (ImGui::Button("Delete this message"))
 					{

@@ -36,16 +36,17 @@ bool ModuleServer::update()
 		startServer();
 		break;
 	case ServerState::Running:
-		if (send_global_message)
-		{
-			QueryAllChatMessagesToAll();
-			send_global_message = false;
-		}
-
 		handleIncomingData();
 		handleOutgoingData();
 		deleteInvalidSockets();
-		
+
+		if (send_global_message && k > 10)
+		{
+			QueryAllChatMessagesToAll();
+			send_global_message = false;
+			k = 0;
+		}
+		k+=1;
 		break;
 	case ServerState::Stopping:
 		stopServer();
@@ -161,7 +162,7 @@ void ModuleServer::sendPacketQueryAllMessagesResponse(SOCKET socket, const std::
 		outStream.Write(messages[i].senderUsername);
 		outStream.Write(messages[i].subject);
 		outStream.Write(messages[i].body);
-		outStream.Write(messages[i].timeDate);
+		outStream.Write(messages[i].time);
 		outStream.Write(messages[i].id);
 	}
 
@@ -186,7 +187,7 @@ void ModuleServer::sendPacketQueryAllChatMessagesResponse(SOCKET socket)
 		outStream.Write(messages[i].senderUsername);
 		outStream.Write(messages[i].subject);
 		outStream.Write(messages[i].body);
-		outStream.Write(messages[i].timeDate);
+		outStream.Write(messages[i].time);
 		outStream.Write(messages[i].id);
 	}
 
@@ -200,7 +201,7 @@ void ModuleServer::onPacketReceivedSendMessage(SOCKET socket, const InputMemoryS
 	stream.Read(message.senderUsername);
 	stream.Read(message.subject);
 	stream.Read(message.body);
-	stream.Read(message.timeDate);
+	stream.Read(message.time);
 	stream.Read(message.id);
 
 	// Insert the message in the database

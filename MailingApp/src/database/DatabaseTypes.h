@@ -8,6 +8,6 @@ struct Message
 	std::string receiverUsername;
 	std::string subject;
 	std::string body;
-	std::string timeDate;
+	std::string time;
 	int id;
 };

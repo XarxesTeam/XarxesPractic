@@ -48,8 +48,8 @@ void MySqlDatabaseGateway::insertMessage(const Message & message)
 
 		std::string sqlStatement;
 		// TODO: Create the SQL statement to insert the passed message into the DB (INSERT)
-		sqlStatement = "INSERT INTO MessengerServerDatabase (sender, receiver, subject, body, id) VALUES ('" + message.senderUsername + "', '"
-			+ message.receiverUsername + "', '" + message.subject + "', '" + message.body + "', '" + buffer + "');";
+		sqlStatement = "INSERT INTO MessengerServerDatabase (sender, receiver, subject, body, id, time) VALUES ('" + message.senderUsername + "', '"
+			+ message.receiverUsername + "', '" + message.subject + "', '" + message.body + "', '" + buffer + "', '" + message.time + "');";
 
 		// insert some messages
 		db.sql(sqlStatement.c_str());
@@ -103,7 +103,7 @@ std::vector<Message> MySqlDatabaseGateway::getAllMessagesReceivedByUser(const st
 	{
 		std::string sqlStatement;
 		// TODO: Create the SQL statement to query all messages from the given user (SELECT)
-		sqlStatement = "SELECT sender, receiver, subject, body, id FROM MessengerServerDatabase WHERE receiver = '" + username + "'";
+		sqlStatement = "SELECT sender, receiver, subject, body, id, time FROM MessengerServerDatabase WHERE receiver = '" + username + "'";
 
 		// consult all messages
 		DBResultSet res = db.sql(sqlStatement.c_str());
@@ -116,6 +116,7 @@ std::vector<Message> MySqlDatabaseGateway::getAllMessagesReceivedByUser(const st
 			message.receiverUsername = messageRow.columns[1];
 			message.subject = messageRow.columns[2];
 			message.body = messageRow.columns[3];
+			message.time = messageRow.columns[5];
 			message.id = atoi((const char*)messageRow.columns[4].c_str());
 			messages.push_back(message);
 		}

@@ -90,9 +90,11 @@ void ModuleServer::onPacketReceived(SOCKET socket, const InputMemoryStream & str
 		break;
 	case PacketType::ClearAllMessagesRequest:
 		onPackedReceivedClearUserMessages(socket, stream);
+		send_global_message = true;
 		break;
 	case PacketType::ClearOneMessage:
 		onPackedReceivedClearUserOneMessage(socket, stream);
+		send_global_message = true;
 		break;
 	default:
 		LOG("Unknown packet type received");
@@ -139,7 +141,7 @@ void ModuleServer::QueryAllChatMessagesToAll()
 	std::list<ClientStateInfo>::const_iterator iterator = clients.begin();
 	while (iterator != clients.end())
 	{
-		sendPacketQueryAllChatMessagesResponse(clients.begin()._Ptr->_Myval.socket);
+		sendPacketQueryAllChatMessagesResponse(iterator._Ptr->_Myval.socket);
 		iterator++;
 	}
 }

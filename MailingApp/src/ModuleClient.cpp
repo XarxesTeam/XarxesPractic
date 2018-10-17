@@ -113,7 +113,7 @@ void ModuleClient::onPacketReceived(const InputMemoryStream & stream)
 	case PacketType::QueryAllChatMessagesResponse:
 		onPacketReceivedQueryAllChatMessagesResponse(stream);
 		break;
-	case PacketType::QueryAllMessagesRequest:
+	case PacketType::QueryAllMessagesResponse:
 		onPacketReceivedQueryAllMessagesResponse(stream);
 		break;
 	default:
@@ -170,8 +170,11 @@ void ModuleClient::onPacketReceivedQueryAllChatMessagesResponse(const InputMemor
 		stream.Read(new_message.time);
 		stream.Read(new_message.id);
 
-		chat_console->AddLog(new_message.body.c_str());
-
+		std::string completeMsg = new_message.time.c_str();
+		completeMsg += new_message.senderUsername.c_str();
+		completeMsg += ": ";
+		completeMsg += new_message.body.c_str();
+		chat_console->AddLog(completeMsg.c_str());
 	}
 
 	messengerState = MessengerState::ShowingMessages;
@@ -251,18 +254,39 @@ void ModuleClient::sendPacketSendMessage(const char * receiver, const char * sub
 	time_t theTime = time(NULL);
 	struct tm *localTime = localtime(&theTime);
 
-	int day = localTime->tm_mday;
-	int month = localTime->tm_mon + 1; // Month is 0 – 11, add 1 to get a jan-dec 1-12 concept
-	int year = localTime->tm_year + 1900; // Year is # years since 1900
+	//int day = localTime->tm_mday;
+	//int month = localTime->tm_mon + 1; // Month is 0 – 11, add 1 to get a jan-dec 1-12 concept
+	//int year = localTime->tm_year + 1900; // Year is # years since 1900
+	//int hour = localTime->tm_hour;
+	//int min = localTime->tm_min;
+	//int sec = localTime->tm_sec;
+	//
+	//if (min < 10)
+	//	timeDate = (std::to_string(hour) + ":0" + std::to_string(min) + ":" + std::to_string(sec) + "-" + std::to_string(day) + "-" + std::to_string(month) + "-" + std::to_string(year));
+	//else
+	//	timeDate = (std::to_string(hour) + ":" + std::to_string(min) + ":" + std::to_string(sec) + "-" + std::to_string(day) + "-" + std::to_string(month) + "-" + std::to_string(year));
+
+	std::string timeLocal;
 	int hour = localTime->tm_hour;
 	int min = localTime->tm_min;
 	int sec = localTime->tm_sec;
-	std::string timeDate;
-	if (min < 10)
-		timeDate = (std::to_string(hour) + ":0" + std::to_string(min) + ":" + std::to_string(sec) + "-" + std::to_string(day) + "-" + std::to_string(month) + "-" + std::to_string(year));
+	// Hours
+	if (hour < 10)
+		timeLocal = ("0" + std::to_string(hour));
 	else
-		timeDate = (std::to_string(hour) + ":" + std::to_string(min) + ":" + std::to_string(sec) + "-" + std::to_string(day) + "-" + std::to_string(month) + "-" + std::to_string(year));
-	stream.Write(std::string(timeDate));
+		timeLocal = std::to_string(hour);
+	// Minutes
+	if (min < 10)
+		timeLocal += (":0" + std::to_string(min));
+	else
+		timeLocal += (":" + std::to_string(min));
+	// Seconds
+	if (sec < 10)
+		timeLocal += (":0" + std::to_string(sec) + " ");
+	else
+		timeLocal += (":" + std::to_string(sec) + " ");
+
+	stream.Write(std::string(timeLocal));
 
 	int rand_val = rand();
 	

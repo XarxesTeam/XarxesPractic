@@ -165,6 +165,7 @@ void ModuleServer::sendPacketQueryAllMessagesResponse(SOCKET socket, const std::
 		outStream.Write(messages[i].subject);
 		outStream.Write(messages[i].body);
 		outStream.Write(messages[i].time);
+		outStream.Write(messages[i].date);
 		outStream.Write(messages[i].id);
 	}
 
@@ -190,6 +191,7 @@ void ModuleServer::sendPacketQueryAllChatMessagesResponse(SOCKET socket)
 		outStream.Write(messages[i].subject);
 		outStream.Write(messages[i].body);
 		outStream.Write(messages[i].time);
+		outStream.Write(messages[i].date);
 		outStream.Write(messages[i].id);
 	}
 
@@ -204,6 +206,7 @@ void ModuleServer::onPacketReceivedSendMessage(SOCKET socket, const InputMemoryS
 	stream.Read(message.subject);
 	stream.Read(message.body);
 	stream.Read(message.time);
+	stream.Read(message.date);
 	stream.Read(message.id);
 
 	// Insert the message in the database

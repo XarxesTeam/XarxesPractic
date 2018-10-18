@@ -140,6 +140,7 @@ void ModuleClient::onPacketReceivedQueryAllMessagesResponse(const InputMemoryStr
 		stream.Read(new_message.subject);
 		stream.Read(new_message.body);
 		stream.Read(new_message.time);
+		stream.Read(new_message.date);
 		stream.Read(new_message.id);
 
 		messages.push_back(new_message);
@@ -168,6 +169,7 @@ void ModuleClient::onPacketReceivedQueryAllChatMessagesResponse(const InputMemor
 		stream.Read(new_message.subject);
 		stream.Read(new_message.body);
 		stream.Read(new_message.time);
+		stream.Read(new_message.date);
 		stream.Read(new_message.id);
 
 		std::string completeMsg = new_message.time.c_str();
@@ -286,6 +288,7 @@ void ModuleClient::sendPacketSendMessage(const char * receiver, const char * sub
 	else
 		timeLocal += (":" + std::to_string(sec) + " ");
 
+	stream.Write(std::string(timeLocal));
 	stream.Write(std::string(timeLocal));
 
 	int rand_val = rand();

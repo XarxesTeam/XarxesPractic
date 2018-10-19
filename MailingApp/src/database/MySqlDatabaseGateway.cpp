@@ -96,6 +96,7 @@ void MySqlDatabaseGateway::clearMessage(int id, const std::string & username)
 std::vector<Message> MySqlDatabaseGateway::getAllMessagesReceivedByUser(const std::string & username)
 {
 	std::vector<Message> messages;
+	std::vector<Message> time_order_messages;
 
 	DBConnection db(bufMySqlHost, bufMySqlPort, bufMySqlDatabase, bufMySqlUsername, bufMySqlPassword);
 
@@ -109,6 +110,7 @@ std::vector<Message> MySqlDatabaseGateway::getAllMessagesReceivedByUser(const st
 		DBResultSet res = db.sql(sqlStatement.c_str());
 
 		// fill the array of messages
+		
 		for (auto & messageRow : res.rows)
 		{
 			Message message;
@@ -119,11 +121,37 @@ std::vector<Message> MySqlDatabaseGateway::getAllMessagesReceivedByUser(const st
 			message.time = messageRow.columns[4];
 			message.date = messageRow.columns[5];
 			message.id = atoi((const char*)messageRow.columns[6].c_str());
+
 			messages.push_back(message);
+		}
+
+		
+		int tot = messages.size();
+		int k = 0;
+		while (k < tot)
+		{
+			Message selected_msg = messages[0];
+			std::vector<Message>::iterator it = messages.begin();
+			std::vector<Message>::iterator foc;
+			while (it != messages.end())
+			{
+				if (selected_msg.CalcTimeVal() > it._Ptr->CalcTimeVal())
+				{
+					selected_msg = *it._Ptr;
+					foc = it;
+				}
+				it++;
+			}
+
+			if (messages.size() == 1)messages.clear();
+			else messages.erase(foc);
+
+			time_order_messages.push_back(selected_msg);
+			k += 1;
 		}
 	}
 	
-	return messages;
+	return time_order_messages;
 }
 
 std::vector<Message> MySqlDatabaseGateway::getAllMessagesReceivedByChat()

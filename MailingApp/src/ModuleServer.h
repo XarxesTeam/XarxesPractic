@@ -52,6 +52,8 @@ private:
 
 	void sendPacketQueryAllChatMessagesResponse(SOCKET socket);
 
+	void sendPacketClearAllChatMessagesResponse(SOCKET socket);
+
 	void sendPacket(SOCKET socket, OutputMemoryStream& stream);
 
 	

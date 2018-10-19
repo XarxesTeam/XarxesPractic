@@ -11,4 +11,13 @@ struct Message
 	std::string time;
 	std::string date;
 	int id;
+
+	int CalcTimeVal()
+	{
+		char sec[2];
+		sec[0] = time.at(7);
+		sec[1] = time.at(6);
+
+		return atoi(sec);
+	}
 };

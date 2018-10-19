@@ -52,12 +52,14 @@ bool ModuleClient::cleanUp()
 
 void ModuleClient::_SendGlobalMessage(const char * body)
 {
-	int size = sizeof(body);
-	strcpy_s(messageBuf, sizeof(body), body);
+	int size = strlen(body);
+	strcpy_s(messageBuf, size + 1, body);
 	char rec[10] = "all";
-	strcpy_s(receiverBuf, sizeof(rec), rec);
+	size = strlen(rec);
+	strcpy_s(receiverBuf, size + 1, rec);
 	char sub[30] = "global_message";
-	strcpy_s(subjectBuf, sizeof(sub), sub);
+	size = strlen(sub);
+	strcpy_s(subjectBuf, size + 1, sub);
 
 	messengerState = MessengerState::SendingGlobalMessage;
 }
@@ -115,6 +117,9 @@ void ModuleClient::onPacketReceived(const InputMemoryStream & stream)
 		break;
 	case PacketType::QueryAllMessagesResponse:
 		onPacketReceivedQueryAllMessagesResponse(stream);
+		break;
+	case PacketType::ClearChatResponse:
+		onPacketReceivedClearChatMessagesResponse(stream);
 		break;
 	default:
 		LOG("Unknown packet type received");
@@ -180,6 +185,11 @@ void ModuleClient::onPacketReceivedQueryAllChatMessagesResponse(const InputMemor
 	}
 
 	messengerState = MessengerState::ShowingMessages;
+}
+
+void ModuleClient::onPacketReceivedClearChatMessagesResponse(const InputMemoryStream & stream)
+{
+	chat_console->ClearLog();
 }
 
 void ModuleClient::sendPacketLogin(const char * username)

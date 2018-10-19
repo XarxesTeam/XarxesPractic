@@ -198,6 +198,15 @@ void ModuleServer::sendPacketQueryAllChatMessagesResponse(SOCKET socket)
 	sendPacket(socket, outStream);
 }
 
+void ModuleServer::sendPacketClearAllChatMessagesResponse(SOCKET socket)
+{
+	OutputMemoryStream outStream;
+
+	outStream.Write(PacketType::ClearChatResponse);
+
+	sendPacket(socket, outStream);
+}
+
 void ModuleServer::onPacketReceivedSendMessage(SOCKET socket, const InputMemoryStream & stream)
 {
 	Message message;
@@ -305,7 +314,13 @@ void ModuleServer::updateGUI()
 			//Update console
 			global_chat_console->ClearLog();
 			database()->clearMessages("all");
-			clients.begin()->
+
+			std::list<ClientStateInfo>::const_iterator iterator = clients.begin();
+			while (iterator != clients.end())
+			{
+				sendPacketClearAllChatMessagesResponse(iterator._Ptr->_Myval.socket);
+				iterator++;
+			}
 		}
 
 		bool open = true;

@@ -41,6 +41,8 @@ private:
 
 	void onPacketReceivedQueryAllChatMessagesResponse(const InputMemoryStream &stream);
 
+	void onPacketReceivedClearChatMessagesResponse(const InputMemoryStream &stream);
+
 	void sendPacketLogin(const char *username);
 
 	void sendPacketQueryMessages();

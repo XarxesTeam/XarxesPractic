@@ -11,5 +11,6 @@ enum class PacketType : int8_t
 	ClearOneMessage,
 	QueryAllMessagesResponse,
 	QueryAllChatMessagesResponse,
+	ClearChatResponse,
 	SendMessageRequest
 };

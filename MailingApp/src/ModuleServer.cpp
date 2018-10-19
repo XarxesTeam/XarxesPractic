@@ -305,6 +305,7 @@ void ModuleServer::updateGUI()
 			//Update console
 			global_chat_console->ClearLog();
 			database()->clearMessages("all");
+			clients.begin()->
 		}
 
 		bool open = true;

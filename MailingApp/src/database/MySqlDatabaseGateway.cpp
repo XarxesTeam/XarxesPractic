@@ -49,7 +49,7 @@ void MySqlDatabaseGateway::insertMessage(const Message & message)
 		std::string sqlStatement;
 		// TODO: Create the SQL statement to insert the passed message into the DB (INSERT)
 		sqlStatement = "INSERT INTO MessengerServerDatabase (sender, receiver, subject, body, time, date, id) VALUES ('" + message.senderUsername + "', '"
-			+ message.receiverUsername + "', '" + message.subject + "', '" + message.body + "', '" + message.time + "', '" + message.date + "', '" + buffer + ");";
+			+ message.receiverUsername + "', '" + message.subject + "', '" + message.body + "', '" + message.time + "', '" + message.date + "', '" + buffer + "');";
 
 		// insert some messages
 		db.sql(sqlStatement.c_str());

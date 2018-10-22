@@ -132,22 +132,23 @@ std::vector<Message> MySqlDatabaseGateway::getAllMessagesReceivedByUser(const st
 		{
 			Message selected_msg = messages[0];
 			std::vector<Message>::iterator it = messages.begin();
-			std::vector<Message>::iterator foc;
+			std::vector<Message>::iterator foc = messages.begin();
+
 			while (it != messages.end())
 			{
-				if (selected_msg.CalcTimeVal() > it._Ptr->CalcTimeVal())
+				if (selected_msg.IsMessageOlder(*it._Ptr))
 				{
 					selected_msg = *it._Ptr;
 					foc = it;
 				}
 				it++;
 			}
-
+		
 			if (messages.size() == 1)messages.clear();
 			else messages.erase(foc);
-
+		
 			time_order_messages.push_back(selected_msg);
-			k += 1;
+			k++;
 		}
 	}
 	

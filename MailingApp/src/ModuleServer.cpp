@@ -107,7 +107,10 @@ void ModuleServer::onPacketReceived(SOCKET socket, const InputMemoryStream & str
 	int size = chat_msg.size();
 	for (int k = 0; k < size; k++)
 	{
-		global_chat_console->AddLog(chat_msg[k].body.c_str());
+		std::string msg = chat_msg[k].time.c_str();
+		msg += chat_msg[k].senderUsername.c_str();
+		msg += ": " + chat_msg[k].body;
+		global_chat_console->AddLog(msg.c_str());
 	}
 
 }
@@ -152,7 +155,6 @@ void ModuleServer::sendPacketQueryAllMessagesResponse(SOCKET socket, const std::
 	std::vector<Message> messages = database()->getAllMessagesReceivedByUser(username);
 
 	OutputMemoryStream outStream;
-	// TODO: Create QueryAllMessagesResponse and serialize all the messages
 
 	outStream.Write(PacketType::QueryAllMessagesResponse);
 	uint32_t messageCount = messages.size();
@@ -178,7 +180,6 @@ void ModuleServer::sendPacketQueryAllChatMessagesResponse(SOCKET socket)
 	std::vector<Message> messages = database()->getAllMessagesReceivedByUser("all");
 
 	OutputMemoryStream outStream;
-	// TODO: Create QueryAllMessagesResponse and serialize all the messages
 
 	outStream.Write(PacketType::QueryAllChatMessagesResponse);
 	uint32_t messageCount = messages.size();
@@ -305,7 +306,10 @@ void ModuleServer::updateGUI()
 			int size = chat_msg.size();
 			for (int k = 0; k < size; k++)
 			{
-				global_chat_console->AddLog(chat_msg[k].body.c_str());
+				std::string msg = chat_msg[k].time.c_str();
+				msg += chat_msg[k].senderUsername.c_str();
+				msg += ": " + chat_msg[k].body;
+				global_chat_console->AddLog(msg.c_str());
 			}
 		}
 

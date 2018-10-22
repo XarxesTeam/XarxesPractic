@@ -132,11 +132,8 @@ void ModuleClient::onPacketReceivedQueryAllMessagesResponse(const InputMemoryStr
 	messages.clear();
 
 	uint32_t messageCount;
-	// TODO: Deserialize the number of messages
 	stream.Read(messageCount);
 
-	// TODO: Deserialize messages one by one and push_back them into the messages vector
-	// NOTE: The messages vector is an attribute of this class
 	for (int i = 0; i < messageCount; i++)
 	{
 		Message new_message;
@@ -159,11 +156,8 @@ void ModuleClient::onPacketReceivedQueryAllMessagesResponse(const InputMemoryStr
 void ModuleClient::onPacketReceivedQueryAllChatMessagesResponse(const InputMemoryStream & stream)
 {
 	uint32_t messageCount;
-	// TODO: Deserialize the number of messages
 	stream.Read(messageCount);
 
-	// TODO: Deserialize messages one by one and push_back them into the messages vector
-	// NOTE: The messages vector is an attribute of this class
 	chat_console->ClearLog();
 
 	for (int i = 0; i < messageCount; i++)
@@ -208,9 +202,7 @@ void ModuleClient::sendPacketQueryMessages()
 {
 	OutputMemoryStream stream;
 
-	// TODO: Serialize message (only the packet type)
 	stream.Write(PacketType::QueryAllMessagesRequest);
-	// TODO: Use sendPacket() to send the packet
 	sendPacket(stream);
 
 	messengerState = MessengerState::ReceivingMessages;
@@ -220,9 +212,7 @@ void ModuleClient::sendPacketQueryChatMessages()
 {
 	OutputMemoryStream stream;
 
-	// TODO: Serialize message (only the packet type)
 	stream.Write(PacketType::QueryAllChatMessagesRequest);
-	// TODO: Use sendPacket() to send the packet
 	sendPacket(stream);
 
 	messengerState = MessengerState::ReceivingChatMessages;
@@ -233,9 +223,7 @@ void ModuleClient::sendPacketClearMessages(int id)
 	OutputMemoryStream stream;
 	if (id == -1)
 	{
-		// TODO: Serialize message (only the packet type)
 		stream.Write(PacketType::ClearAllMessagesRequest);
-		// TODO: Use sendPacket() to send the packet
 	}
 	else
 	{
@@ -256,8 +244,7 @@ void ModuleClient::sendPacketSendMessage(const char * receiver, const char * sub
 	OutputMemoryStream stream;
 
 	stream.Write(PacketType::SendMessageRequest);
-	// TODO: Serialize message (packet type and all fields in the message)
-	// NOTE: remember that senderBuf contains the current client (i.e. the sender of the message)
+
 	stream.Write(std::string(receiver));
 	stream.Write(std::string(senderBuf));
 	stream.Write(std::string(subject));

@@ -30,8 +30,6 @@ public:
 
 private:
 
-	// Methods involving serialization / deserialization (contain TODOs)
-
 	void onPacketReceived(SOCKET socket, const InputMemoryStream& stream);
 
 	void onPacketReceivedLogin(SOCKET socket, const InputMemoryStream& stream);

@@ -31,8 +31,6 @@ public:
 
 private:
 
-	// Methods involving serialization / deserialization (contain TODOs)
-
 	void updateMessenger();
 
 	void onPacketReceived(const InputMemoryStream &stream);
